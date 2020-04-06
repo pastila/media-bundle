@@ -1,0 +1,9 @@
+accurateweb_media_bundle_image_gallery_editor_list:
+  path: /gallery/{gallery_provider_id}/{gallery_id}
+  defaults: { _controller: AccuratewebMediaBundle:Admin/Gallery:list }
+  methods: [GET]
+
+accurateweb_media_bundle_image_gallery_editor_delete:
+  path: /gallery/{gallery_provider_id}/{gallery_id}/{media_id}
+  defaults: { _controller: AccuratewebMediaBundle:Admin/Gallery:delete, media_id: null }
+  methods: [DELETE]

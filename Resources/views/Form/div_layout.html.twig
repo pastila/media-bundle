@@ -1,0 +1,51 @@
+{% block aw_media_image_widget %}
+  {% spaceless %}
+    {% if url is not null %}
+      <img src="{{ url }}"/>
+    {% endif %}
+
+    <input type="file" {{ block('widget_attributes') }} value="{{ value }}" />
+  {% endspaceless %}
+{% endblock %}
+
+{% block aw_media_gallery_widget %}
+  <div {{ block('widget_attributes') }}>
+    <noscript>
+      <a href="#">Редактировать изображения</a>
+      <p>Включите Javascript, чтобы воспользоваться всеми функциями редактора</p>
+    </noscript>
+    <script type="text/javascript">/*<![CDATA[*/
+      $(function(){
+        $('#{{ id }}').galleryEditor($.extend({
+          images: {{ image_list_url|json_encode|raw }},
+          crop: {{ crop|json_encode|raw }},
+          onCrop: function(editor, data){
+            $.ajax({
+              url: "{{ path('api_image_crop') }}",
+              data: { coords: data.coords, image_id: data.image.id },
+              dataType: 'json',
+              success: function(){
+                data.image.obj.galleryEditorImage('refresh')
+              }
+            });
+          },
+          onRemove: function(editor, data){
+            $.ajax({
+              type: 'DELETE',
+              url: {{ image_delete_url|json_encode|raw }},
+              data: { media_id: data.image.id }
+            });
+          },
+          onMove: function(editor, data){
+            $.ajax({
+              url: "{{ path('api_image_move') }}",
+              data: { image_id: data.image.id, position: data.position-1 }
+            })
+          },
+          uploadUrl: {{ image_upload_url|json_encode|raw }},
+          onEdit: '%s'
+        }, {{ js_options|json_encode }}));
+      });
+      /*]]>*/</script>
+  </div>
+{% endblock %}

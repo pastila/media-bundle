@@ -1,0 +1,8 @@
+accurateweb_media_bundle_gallery_upload:
+  path: /gallery/{gallery_provider_id}/{gallery_id}/upload
+  defaults: { _controller: AccuratewebMediaBundle:Media:upload }
+
+accurateweb_media_bundle_gallery_list:
+  path: /gallery/{gallery_provider_id}/{gallery_id}
+  defaults: { _controller: AccuratewebMediaBundle:Media:list }
+  methods: [GET]

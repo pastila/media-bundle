@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~  (c) 2019 ИП Рагозин Денис Николаевич. Все права защищены.
+  ~
+  ~  Настоящий файл является частью программного продукта, разработанного ИП Рагозиным Денисом Николаевичем
+  ~  (ОГРНИП 315668300000095, ИНН 660902635476).
+  ~
+  ~  Алгоритм и исходные коды программного кода программного продукта являются коммерческой тайной
+  ~  ИП Рагозина Денис Николаевича. Любое их использование без согласия ИП Рагозина Денис Николаевича рассматривается,
+  ~  как нарушение его авторских прав.
+  ~   Ответственность за нарушение авторских прав наступает в соответствии с действующим законодательством РФ.
+  -->
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="aw.media.storage.file" class="Accurateweb\MediaBundle\Model\Media\Storage\FileMediaStorage">
+           <argument>%kernel.root_dir%/../web/uploads</argument>
+           <argument>%kernel.root_dir%/../var/uploads</argument>
+           <argument>/uploads</argument>
+        </service>
+
+        <service id="aw.media.storage.yandexcloud" class="Accurateweb\MediaBundle\Model\Media\Storage\YandexCloudMediaStorage">
+            <argument type="service" id="aws.s3"/>
+            <argument>%yandex_cloud_media_bucket%</argument>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="aw.media.storage.provider" class="Accurateweb\MediaBundle\Model\Media\Storage\MediaStorageProvider">
+            <argument/> <!-- To be filled by compiler pass -->
+        </service>
+
+        <service id="aw.media.manager" class="Accurateweb\MediaBundle\Model\Media\MediaManager">
+            <argument type="service" id="aw.media.storage.provider"/>
+        </service>
+
+        <service class="Accurateweb\MediaBundle\Form\ImageType">
+            <argument type="service" id="aw.media.manager"></argument>
+            <tag name="form.type"/>
+        </service>
+
+        <service class="Accurateweb\MediaBundle\Form\ImageGalleryType">
+            <argument type="service" id="router.default"/>
+            <argument type="service" id="aw.media.manager"></argument>
+            <tag name="form.type"/>
+        </service>
+
+        <service id="aw.media.image.uploader" class="Accurateweb\MediaBundle\Service\ImageUploader">
+            <argument type="service" id="aw.media.storage.provider"/>
+            <argument type="service" id="aw_imaging.adapter"/>
+            <argument type="service" id="aw_imaging.filter.factory"/>
+        </service>
+
+        <service class="Accurateweb\MediaBundle\EventListener\ImageUploadListener">
+            <argument type="service" id="aw.media.image.uploader"/>
+            <argument type="service" id="annotations.reader"/>
+            <argument type="service" id="aw_media.thumbnail_generator"/>
+            <tag name="doctrine.event_listener" event="prePersist"/>
+            <tag name="doctrine.event_listener" event="preUpdate"/>
+        </service>
+
+        <service id="aw_media.thumbnail_generator" class="Accurateweb\MediaBundle\Generator\ImageThumbnailGenerator">
+            <argument type="service" id="aw.media.storage.file"></argument>
+            <argument type="service" id="aw_imaging.adapter"></argument>
+            <argument type="service" id="aw_imaging.filter.factory"></argument>
+        </service>
+
+        <service id="aw_media.twig.media" class="Accurateweb\MediaBundle\Twig\MediaExtension">
+            <argument type="service" id="aw.media.storage.provider"></argument>
+            <tag name="twig.extension" />
+        </service>
+    </services>
+</container>
