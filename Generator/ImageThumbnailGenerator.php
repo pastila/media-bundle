@@ -174,12 +174,9 @@ class ImageThumbnailGenerator
         }
         catch (\Exception $e)
         {
-          throw new ThumbnailGeneratorException(sprintf('Unable to store thumbnail in media storage: %s', $e->getMessage()), $e->getCode(), $e);
-        }
-        finally
-        {
           @unlink($thumbnailPath);
           @rmdir($thumbnailDir);
+          throw new ThumbnailGeneratorException(sprintf('Unable to store thumbnail in media storage: %s', $e->getMessage()), $e->getCode(), $e);
         }
       }
 
