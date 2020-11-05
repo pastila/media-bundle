@@ -21,12 +21,6 @@
            <argument>/uploads</argument>
         </service>
 
-        <service id="aw.media.storage.yandexcloud" class="Accurateweb\MediaBundle\Model\Media\Storage\YandexCloudMediaStorage">
-            <argument type="service" id="aws.s3"/>
-            <argument>%yandex_cloud_media_bucket%</argument>
-            <argument type="service" id="logger"/>
-        </service>
-
         <service id="aw.media.storage.provider" class="Accurateweb\MediaBundle\Model\Media\Storage\MediaStorageProvider">
             <argument/> <!-- To be filled by compiler pass -->
         </service>
