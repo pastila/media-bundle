@@ -58,6 +58,7 @@
             <argument type="service" id="aw.media.storage.file"></argument>
             <argument type="service" id="aw_imaging.adapter"></argument>
             <argument type="service" id="aw_imaging.filter.factory"></argument>
+            <argument type="service" id="router.context"></argument>
         </service>
 
         <service id="aw_media.twig.media" class="Accurateweb\MediaBundle\Twig\MediaExtension">
