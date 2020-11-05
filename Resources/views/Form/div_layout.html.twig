@@ -1,7 +1,9 @@
 {% block aw_media_image_widget %}
   {% spaceless %}
     {% if url is not null %}
-      <img src="{{ url }}"/>
+      <br>
+      <img style="max-width: 100%;" src="{{ url }}"/>
+      <br>
     {% endif %}
 
     <input type="file" {{ block('widget_attributes') }} value="{{ value }}" />
