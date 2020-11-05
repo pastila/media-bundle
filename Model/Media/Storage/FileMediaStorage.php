@@ -22,7 +22,10 @@ use Accurateweb\MediaBundle\Model\Media\MediaInterface;
 use Accurateweb\MediaBundle\Model\Media\Resource\MediaResource;
 use Accurateweb\MediaBundle\Model\Media\Resource\MediaResourceInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\Exception\FileException; //добавил
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Routing\RequestContext;
+
+//добавил
 
 class FileMediaStorage implements MediaStorageInterface
 {
@@ -45,11 +48,14 @@ class FileMediaStorage implements MediaStorageInterface
    */
   private $urlPrefix;
 
-  public function __construct($uploadsDir, $originalsDir=null, $urlPrefix='')
+  private $requestContext;
+
+  public function __construct($uploadsDir, $originalsDir, $urlPrefix, RequestContext $requestContext)
   {
     $this->uploadsDir = $uploadsDir;
     $this->originalsDir = $originalsDir;
     $this->urlPrefix = $urlPrefix;
+    $this->requestContext = $requestContext;
   }
 
 
@@ -65,7 +71,7 @@ class FileMediaStorage implements MediaStorageInterface
    */
   public function retrieve(MediaInterface $media)
   {
-    $resource = new MediaResource($media, $this->uploadsDir, $this->urlPrefix);
+    $resource = new MediaResource($media, $this->uploadsDir, $this->buildUrlPrefix());
 
     if (!$resource->fileExists())
     {
@@ -128,5 +134,26 @@ class FileMediaStorage implements MediaStorageInterface
   {
     @unlink($this->getOriginalFilePath($media));
     @unlink($this->getPublicFilePath($media));
+  }
+
+  private function buildUrlPrefix ()
+  {
+    $url = $this->requestContext->getScheme() . '://';
+    $url .= $this->requestContext->getHost();
+    $scheme = $this->requestContext->getScheme();
+    $port = '';
+
+    if ('http' === $scheme && 80 != $this->requestContext->getHttpPort())
+    {
+      $port = ':' . $this->requestContext->getHttpPort();
+    }
+    elseif ('https' === $scheme && 443 != $this->requestContext->getHttpsPort())
+    {
+      $port = ':' . $this->requestContext->getHttpsPort();
+    }
+
+    $url .= $port;
+
+    return $url . $this->urlPrefix;
   }
 }
