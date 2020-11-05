@@ -4,5 +4,8 @@
     "psr-4": {
       "Accurateweb\\MediaBundle\\": ""
     }
+  },
+  "extra": {
+    "branch-version": "2.x"
   }
 }
