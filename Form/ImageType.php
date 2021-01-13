@@ -47,6 +47,16 @@ class ImageType extends AbstractType
   {
     $entity = $form->getParent()->getData();
 
+    if (is_null($entity))
+    {
+      $view->vars = array_replace($view->vars, array(
+        'type' => 'file',
+        'value' => '',
+        'url' => null,
+      ));
+      return;
+    }
+
     if (!$entity instanceof ImageAwareInterface)
     {
       throw new \Exception();
